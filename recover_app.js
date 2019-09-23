@@ -4,7 +4,7 @@ import React, {Component} from 'react';
    StyleSheet,
    View,
    FlatList,
-   Image, RefreshControl, Button, Switch, ScrollView, ImageBackground, ActivityIndicator, ListView
+   Image, RefreshControl, Button, Switch, ScrollView, ImageBackground
    } from 'react-native';
 import firebase from 'firebase';
 import {Modal, TouchableHighlight, Alert} from 'react-native';
@@ -12,6 +12,7 @@ import { material } from 'react-native-typography';
 import { Container, Header, Content, Card, CardItem, Text, Icon, Right, Grid, Col, Row } from 'native-base';
 import { createDrawerNavigator, createStackNavigator, createAppContainer } from 'react-navigation';
 export default class RelayController extends Component {
+
 
   constructor() {
          super();
@@ -33,8 +34,6 @@ export default class RelayController extends Component {
                LifetimeB2: null,
                modalVisible: false,
          };
-         //True to show the loader
-    this.state = { refreshing: false };
   }
 
 
@@ -43,7 +42,6 @@ export default class RelayController extends Component {
   }
 
   blah() {
-    // this.setState({ refreshing: false});
     console.log('hahaha');
     firebase.database().ref('DCurrentB1/Value').on('value', function (x) {
         // console.log(x.val());
@@ -187,26 +185,10 @@ export default class RelayController extends Component {
 
     }.bind(this));
 
-    return new Promise(resolve => {
-        setTimeout(resolve, 1000);
-      });
+
 // http://arduino.esp8266.com/stable/package_esp8266com_index.json
   }
-  _onRefresh() {
-      //Clear old data of the list
-      // this.setState({ dataSource: [] });
-      //Call the Service to get the latest data
-      this.setState({refreshing: true})
-      this.blah().then(() => {
-        this.setState({refreshing: false});
-        if(this.state.HealthB1 <= 80 && this.state.HealthB2 <= 80) {
-            this.setState({ modalVisible: true})
-        } else {
-            this.setState({ modalVisible: false})
-        }
-      });
 
-    }
   componentDidMount() {
       if(this.state.HealthB1 <= 80 && this.state.HealthB2 <= 80) {
           this.setState({ modalVisible: true})
@@ -238,12 +220,10 @@ export default class RelayController extends Component {
 
       }
 
-     render() {
 
+     render() {
         return (
-          <ScrollView bounces={true} style={styles.backgroundImage} refreshControl={
-          <RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh.bind(this)} />
-        }>
+          <View style={styles.backgroundImage} >
           <Text style={{ fontSize: 23, marginLeft:20, marginRight: 20,marginTop: 30, color: '#0c3953', textAlign: 'center'}}> Battery Management System (BMS) </Text>
           <Modal
                     animationType="slide"
@@ -254,13 +234,13 @@ export default class RelayController extends Component {
                       Alert.alert('Modal has been closed.');
                     }}>
                     <View style={{flex: 1,
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',marginTop: 22, padding: 20}}>
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',marginTop: 22, padding: 20}}>
                       <View style={{flex: 1,
-                          flexDirection: 'column',
-                          justifyContent: 'center',
-                          alignItems: 'center',marginTop: 22, padding: 20,backgroundColor: "white"}}>
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',marginTop: 22, padding: 20,backgroundColor: "white"}}>
                         <Text style={{ fontSize: 23, marginLeft:20, marginRight: 20,marginTop: 30, color: '#0c3953', textAlign: 'center'}}> Battery Management System (BMS) </Text>
                         <Text style={{ fontSize: 23, marginLeft:20, marginRight: 20,marginTop: 30, color: '#0c3953', textAlign: 'center'}}> SoH kurang dari 80!</Text>
                         <TouchableHighlight>
@@ -273,28 +253,36 @@ export default class RelayController extends Component {
                     </View>
                   </Modal>
           <Grid container spacing={24}>
-
-            <Content style={{ marginLeft: 20,marginRight: 20, marginTop:30,flex:1, overflow:'hidden'}}>
+            <Col item md={3}>
+            <Content style={{ marginLeft: 20, marginTop:30,flex:1,flexWrap:'wrap',flexDirection: 'row', overflow:'hidden'}}>
               <Card >
                 <CardItem>
+
                   <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Discharge Current </Text>
+
                   <Right>
+
                   </Right>
                  </CardItem>
+
                  <CardItem>
+
                    <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 1 </Text>
+
                    <Right>
                   <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.DCurrentB1} A</Text>
                    </Right>
                   </CardItem>
                   <CardItem>
+
                     <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 2 </Text>
+
                     <Right>
                   <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.DCurrentB2} A</Text>
                     </Right>
                    </CardItem>
-               </Card>
 
+               </Card>
                <Card>
                  <CardItem>
 
@@ -351,120 +339,126 @@ export default class RelayController extends Component {
                      </CardItem>
 
                  </Card>
-                 <Card >
+</Content>
+
+            </Col>
+            <Col>
+            <Content style={{ marginTop:30, flex:1,flexDirection: 'row'}}>
+              <Card >
+                <CardItem>
+
+                  <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> SoC </Text>
+
+                  <Right>
+
+                  </Right>
+                 </CardItem>
+
+                 <CardItem>
+
+                   <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 1 </Text>
+
+                   <Right>
+                  <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.SOCB1} % </Text>
+                   </Right>
+                  </CardItem>
+                  <CardItem>
+
+                    <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 2 </Text>
+
+                    <Right>
+                  <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.SOCB2} %</Text>
+                    </Right>
+                   </CardItem>
+
+               </Card>
+               <Card>
+                 <CardItem>
+
+                   <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery Health </Text>
+
+                   <Right>
+
+                   </Right>
+                  </CardItem>
+
+                  <CardItem>
+
+                    <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 1 </Text>
+
+                    <Right>
+                    <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.HealthB1} %</Text>
+                    </Right>
+                   </CardItem>
                    <CardItem>
 
-                     <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> SoC </Text>
+                     <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 2 </Text>
 
                      <Right>
-
+                  <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.HealthB2} %</Text>
                      </Right>
                     </CardItem>
 
+                </Card>
+                <Card>
+                  <CardItem>
+
+                    <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Est. Lifetime </Text>
+
+                    <Right>
+
+                    </Right>
+                   </CardItem>
+
+                   <CardItem>
+
+                     <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 1 </Text>
+
+                     <Right>
+                     <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.LifetimeB1} cycle</Text>
+                     </Right>
+                    </CardItem>
                     <CardItem>
 
-                      <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 1 </Text>
+                      <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 2 </Text>
 
                       <Right>
-                     <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.SOCB1} % </Text>
-                      </Right>
-                     </CardItem>
-                     <CardItem>
-
-                       <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 2 </Text>
-
-                       <Right>
-                     <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.SOCB2} %</Text>
-                       </Right>
-                      </CardItem>
-
-                  </Card>
-                  <Card>
-                    <CardItem>
-
-                      <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery Health </Text>
-
-                      <Right>
-
+                      <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.LifetimeB2} cycle</Text>
                       </Right>
                      </CardItem>
 
-                     <CardItem>
-
-                       <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 1 </Text>
-
-                       <Right>
-                       <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.HealthB1} %</Text>
-                       </Right>
-                      </CardItem>
-                      <CardItem>
-
-                        <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 2 </Text>
-
-                        <Right>
-                     <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.HealthB2} %</Text>
-                        </Right>
-                       </CardItem>
-
-                   </Card>
-                   <Card>
-                     <CardItem>
-
-                       <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Est. Lifetime </Text>
-
-                       <Right>
-
-                       </Right>
-                      </CardItem>
-
-                      <CardItem>
-
-                        <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 1 </Text>
-
-                        <Right>
-                        <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.LifetimeB1} cycle</Text>
-                        </Right>
-                       </CardItem>
-                       <CardItem>
-
-                         <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 2 </Text>
-
-                         <Right>
-                         <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.LifetimeB2} cycle</Text>
-                         </Right>
-                        </CardItem>
-
-                    </Card>
-                    <Card style={{  marginBottom:20, marginTop:2}}>
-                      <CardItem>
-
-                        <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Temperature </Text>
-                       </CardItem>
-
-                       <CardItem>
-
-                         <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 1 </Text>
-
-                         <Right>
-                         <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.TempB1} °C</Text>
-                         </Right>
-                        </CardItem>
-                        <CardItem>
-
-                          <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 2 </Text>
-
-                          <Right>
-                          <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.TempB2} °C</Text>
-                          </Right>
-                         </CardItem>
-
-                     </Card>
-                  </Content>
+                 </Card>
 
 
+
+            </Content>
+            </Col>
           </Grid>
+          <Card style={{  marginBottom:20, marginTop:2, marginLeft:20, marginRight:20}}>
+            <CardItem>
 
-          </ScrollView>
+              <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Temperature </Text>
+             </CardItem>
+
+             <CardItem>
+
+               <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 1 </Text>
+
+               <Right>
+               <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.TempB1} °C</Text>
+               </Right>
+              </CardItem>
+              <CardItem>
+
+                <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> Battery 2 </Text>
+
+                <Right>
+                <Text style={{ fontSize: 13, marginTop: 5, color: '#0c3953', textAlign: 'center'}}> {this.state.TempB2} °C</Text>
+                </Right>
+               </CardItem>
+
+           </Card>
+          </View>
         );
 
 
